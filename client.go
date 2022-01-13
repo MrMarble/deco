@@ -59,6 +59,48 @@ type ClientListResp struct {
 	} `json:"result"`
 }
 
+// DeviceListResp is the structure of the device_list endpoint
+type DeviceListResp struct {
+	ErrorCode int `json:"error_code"`
+	Result    struct {
+		DeviceList []struct {
+			DeviceIP          string   `json:"device_ip"`
+			DeviceID          string   `json:"device_id,omitempty"`
+			DeviceType        string   `json:"device_type"`
+			NandFlash         bool     `json:"nand_flash"`
+			OwnerTransfer     bool     `json:"owner_transfer,omitempty"`
+			Previous          string   `json:"previous"`
+			BSSID5G           string   `json:"bssid_5g"`
+			BSSID2G           string   `json:"bssid_2g"`
+			BSSIDSta5G        string   `json:"bssid_sta_5g"`
+			BSSIDSta2G        string   `json:"bssid_sta_2g"`
+			ParentDeviceID    string   `json:"parent_device_id,omitempty"`
+			SoftwareVer       string   `json:"software_ver"`
+			Role              string   `json:"role"`
+			ProductLevel      int      `json:"product_level"`
+			HardwareVer       string   `json:"hardware_ver"`
+			InetStatus        string   `json:"inet_status"`
+			SupportPLC        bool     `json:"support_plc"`
+			MAC               string   `json:"mac"`
+			SetGatewaySupport bool     `json:"set_gateway_support"`
+			InetErrorMsg      string   `json:"inet_error_msg"`
+			ConnectionType    []string `json:"connection_type,omitempty"`
+			CustomNickname    string   `json:"custom_nickname,omitempty"`
+			Nickname          string   `json:"nickname"`
+			GroupStatus       string   `json:"group_status"`
+			OemID             string   `json:"oem_id"`
+			SignalLevel       struct {
+				Band24 string `json:"band2_4"`
+				Band5  string `json:"band5"`
+			} `json:"signal_level"`
+			DeviceModel       string `json:"device_model"`
+			OversizedFirmware bool   `json:"oversized_firmware"`
+			SpeedGetSupport   bool   `json:"speed_get_support,omitempty"`
+			HwID              string `json:"hw_id"`
+		} `json:"device_list"`
+	} `json:"result"`
+}
+
 // PerfResp is the structure of the performance endpoint
 type PerfResp struct {
 	ErrorCode int `json:"error_code"`
@@ -129,6 +171,16 @@ func (c *Client) Authenticate(password string) error {
 func (c *Client) Performance() (*PerfResp, error) {
 	var result PerfResp
 	err := c.doEncryptedPost(fmt.Sprintf(";stok=%s/admin/network", c.stok), EndpointArgs{form: "performance"}, readBody, false, &result)
+	if err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
+
+// DeviceList returns the list of connected deco APs
+func (c *Client) DeviceList() (*DeviceListResp, error) {
+	var result DeviceListResp
+	err := c.doEncryptedPost(fmt.Sprintf(";stok=%s/admin/device", c.stok), EndpointArgs{form: "device_list"}, readBody, false, &result)
 	if err != nil {
 		return nil, err
 	}

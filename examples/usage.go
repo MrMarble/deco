@@ -17,6 +17,7 @@ func main() {
 
 	printPerformance(c)
 	printDevices(c)
+	printDecos(c)
 }
 
 func printPerformance(c *deco.Client) {
@@ -31,13 +32,25 @@ func printPerformance(c *deco.Client) {
 }
 
 func printDevices(c *deco.Client) {
-	fmt.Println("[+] Devices")
+	fmt.Println("[+] Clients")
 	result, err := c.ClientList()
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 	for _, device := range result.Result.ClientList {
 
-		fmt.Printf("%s\n - Online: %t\n", device.Name, device.Online)
+		fmt.Printf("%s\tOnline: %t\n", device.Name, device.Online)
 	}
 }
+
+func printDecos(c *deco.Client) {
+	fmt.Println("[+] Devices")
+	result, err := c.DeviceList()
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	for _, device := range result.Result.DeviceList {
+		fmt.Printf("%s\tStatus: %s\n", device.DeviceIP, device.InetStatus)
+	}
+}
+

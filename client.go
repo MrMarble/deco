@@ -51,7 +51,7 @@ type ClientListResp struct {
 			Name           string `json:"name"`
 			Online         bool   `json:"online"`
 			OwnerID        string `json:"owner_id"`
-			RemainTime     uint   `json:"remain_time"`
+			RemainTime     int   `json:"remain_time"`
 			SpaceID        string `json:"space_id"`
 			UpSpeed        uint   `json:"up_speed"`
 			WireType       string `json:"wire_type"`

@@ -78,8 +78,8 @@ func AES256Decrypt(encrypted string, key AESKey) (string, error) {
 
 	mode := cipher.NewCBCDecrypter(block, key.Iv)
 	mode.CryptBlocks(cipherText, cipherText)
-	cipherText, _ = pkcs7Unpadding(cipherText, aes.BlockSize)
-	return string(cipherText), nil
+	cipherText, err = pkcs7Unpadding(cipherText, aes.BlockSize)
+	return string(cipherText), err
 }
 
 func pkcs7Padding(b []byte, blocksize int) ([]byte, error) {

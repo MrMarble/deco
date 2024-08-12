@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
+	"strings"
 	"time"
 
 	"github.com/mrmarble/deco/utils"
@@ -51,7 +52,7 @@ type ClientListResp struct {
 			Name           string `json:"name"`
 			Online         bool   `json:"online"`
 			OwnerID        string `json:"owner_id"`
-			RemainTime     int   `json:"remain_time"`
+			RemainTime     int    `json:"remain_time"`
 			SpaceID        string `json:"space_id"`
 			UpSpeed        uint   `json:"up_speed"`
 			WireType       string `json:"wire_type"`
@@ -192,7 +193,7 @@ func (c *Client) ClientList() (*ClientListResp, error) {
 	var result ClientListResp
 	request := request{
 		Operation: "read",
-		Params:    map[string]string{"device_mac": "default"},
+		Params:    map[string]interface{}{"device_mac": "default"},
 	}
 	jsonRequest, _ := json.Marshal(request)
 	err := c.doEncryptedPost(fmt.Sprintf(";stok=%s/admin/client", c.stok), EndpointArgs{form: "client_list"}, jsonRequest, false, &result)
@@ -206,6 +207,33 @@ func (c *Client) ClientList() (*ClientListResp, error) {
 		}
 	}
 	return &result, nil
+}
+
+// Reboot the deco nodes by mac address
+func (c *Client) Reboot(macAddrs ...string) (map[string]interface{}, error) {
+	var result map[string]interface{}
+	var macList []map[string]string
+
+	for _, mac := range macAddrs {
+		macList = append(macList, map[string]string{
+			"mac": strings.ToUpper(mac),
+		})
+	}
+
+	request := request{
+		Operation: "reboot",
+		Params: map[string]interface{}{
+			"mac_list": macList,
+		},
+	}
+
+	jsonRequest, _ := json.Marshal(request)
+	err := c.doEncryptedPost(fmt.Sprintf(";stok=%s/admin/device", c.stok), EndpointArgs{form: "system"}, jsonRequest, false, &result)
+	if err != nil {
+		return nil, err
+	}
+
+	return result, nil
 }
 
 // Custom lets you make a custom request

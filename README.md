@@ -8,6 +8,7 @@ This Go package provides a basic API wrapper for the tp-link M4 mesh router
 - [x] ClientList: Get connected clients
 - [x] Custom: Make a custom request to the router
 - [x] DeviceList: Get connected Decos
+- [x] Reboot: Reboot Deco mesh node(s)
 - [ ] Wan: Get information about wan
 
 `TODO: look through the firmware for more endpoints`

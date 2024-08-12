@@ -53,8 +53,8 @@ type response struct {
 }
 
 type request struct {
-	Operation string            `json:"operation,omitempty"`
-	Params    map[string]string `json:"params,omitempty"`
+	Operation string                 `json:"operation,omitempty"`
+	Params    map[string]interface{} `json:"params,omitempty"`
 }
 
 // EndpointArgs holds the url params to be sent

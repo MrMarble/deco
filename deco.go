@@ -121,11 +121,20 @@ func (c *Client) doEncryptedPost(path string, params EndpointArgs, body []byte, 
 	}
 
 	if len(sign) > 53 {
-		first, _ := utils.EncryptRsa(sign[:53], c.rsa)
-		second, _ := utils.EncryptRsa(sign[53:], c.rsa)
+		first, err := utils.EncryptRsa(sign[:53], c.rsa)
+		if err != nil {
+			return err
+		}
+		second, err := utils.EncryptRsa(sign[53:], c.rsa)
+		if err != nil {
+			return err
+		}
 		sign = fmt.Sprintf("%s%s", first, second)
 	} else {
-		sign, _ = utils.EncryptRsa(sign, c.rsa)
+		sign, err = utils.EncryptRsa(sign, c.rsa)
+		if err != nil {
+			return err
+		}
 	}
 
 	postData := fmt.Sprintf("sign=%s&data=%s", url.QueryEscape(sign), url.QueryEscape(encryptedData))
@@ -158,6 +167,10 @@ func (c *Client) doPost(path string, params EndpointArgs, body []byte, result in
 	}
 
 	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusOK {
+		return fmt.Errorf("unexpected status code: %d", res.StatusCode)
+	}
 
 	if err := json.NewDecoder(res.Body).Decode(&result); err != nil {
 		return err
